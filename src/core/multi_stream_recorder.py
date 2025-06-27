@@ -197,7 +197,7 @@ class MultiStreamRecorder:
     
     def _start_recording_with_stop_event(self, recorder: TikTokRecorder, thread_name: str):
         """
-        Start recording with stop event support.
+        Start recording with stop event support and resolution detection.
         """
         live_url = recorder.tiktok.get_live_url(recorder.room_id)
         if not live_url:
@@ -225,12 +225,33 @@ class MultiStreamRecorder:
         
         logger.info(f"[{thread_name}] \033[32mStarted recording\033[0m to: {output}")
         
+        # Setup resolution detection
+        config_manager = ConfigManager()
+        check_interval = config_manager.get_resolution_check_interval(
+            user=recorder.user, room_id=recorder.room_id
+        )
+        
+        resolution_detector = ResolutionDetector(
+            stream_url=live_url,
+            check_interval=check_interval
+        )
+        
         buffer_size = 512 * 1024  # 512 KB buffer
         buffer = bytearray()
         
         with open(output, "wb") as out_file:
             stop_recording = False
+            restart_requested = [False]  # Use list to allow modification in nested function
             start_time = time.time()
+            
+            def on_resolution_change(old_resolution, new_resolution):
+                if config_manager.should_restart_on_resolution_change(user=recorder.user, room_id=recorder.room_id):
+                    logger.info(f"[{thread_name}] Resolution change detected: {old_resolution[0]}x{old_resolution[1]} → {new_resolution[0]}x{new_resolution[1]}")
+                    logger.info(f"[{thread_name}] Auto-restart enabled. Stopping current recording to restart with new resolution.")
+                    restart_requested[0] = True
+            
+            # Start resolution monitoring
+            resolution_detector.start_monitoring(on_resolution_change)
             
             while not stop_recording and not self.stop_event.is_set():
                 try:
@@ -252,6 +273,12 @@ class MultiStreamRecorder:
                         if recorder.duration and elapsed_time >= recorder.duration:
                             stop_recording = True
                             break
+                        
+                        # Check if restart was requested due to resolution change
+                        if restart_requested[0]:
+                            logger.info(f"[{thread_name}] Stopping current recording due to resolution change...")
+                            stop_recording = True
+                            break
                 
                 except Exception as ex:
                     logger.error(f"[{thread_name}] Recording error: {ex}")
@@ -262,6 +289,9 @@ class MultiStreamRecorder:
                         out_file.write(buffer)
                         buffer.clear()
                     out_file.flush()
+        
+        # Stop resolution monitoring
+        resolution_detector.stop_monitoring()
         
         logger.info(f"[{thread_name}] \033[36mRecording finished\033[0m: {output}")
         
@@ -275,6 +305,24 @@ class MultiStreamRecorder:
                 Telegram().upload(output.replace('_flv.mp4', '.mp4'))
         except Exception as ex:
             logger.error(f"[{thread_name}] Post-processing error: {ex}")
+        
+        # Check if restart was requested due to resolution change
+        if restart_requested[0] and not self.stop_event.is_set() and recorder.tiktok.is_room_alive(recorder.room_id):
+            logger.info(f"[{thread_name}] " + "="*50)
+            logger.info(f"[{thread_name}] 🔄 AUTO-RESTART: Starting new recording with updated resolution...")
+            logger.info(f"[{thread_name}] " + "="*50)
+            time.sleep(2)  # Brief pause before restarting
+            
+            # Update the recorder's live URL for the new recording
+            try:
+                new_live_url = recorder.tiktok.get_live_url(recorder.room_id)
+                if new_live_url:
+                    # Recursively restart recording with new URL
+                    self._start_recording_with_stop_event(recorder, thread_name)
+                else:
+                    logger.warning(f"[{thread_name}] Unable to get new live URL for restart. User may no longer be live.")
+            except Exception as ex:
+                logger.error(f"[{thread_name}] Error during auto-restart: {ex}")
     
     def _wait_for_completion(self):
         """

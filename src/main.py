@@ -47,10 +47,18 @@ def main():
                     if setting_type not in ['user', 'room']:
                         raise ArgsParseError("Invalid value for -enable-resolution-restart. Use 'user' or 'room'.")
                     
+                    # Handle single stream mode
                     if setting_type == 'user' and args.user:
                         config_manager.set_user_setting(args.user, "restart_on_resolution_change", True)
                     elif setting_type == 'room' and args.room_id:
                         config_manager.set_room_setting(args.room_id, "restart_on_resolution_change", True)
+                    # Handle multi-stream mode
+                    elif setting_type == 'user' and args.users:
+                        for user in args.users:
+                            config_manager.set_user_setting(user, "restart_on_resolution_change", True)
+                    elif setting_type == 'room' and args.room_ids:
+                        for room_id in args.room_ids:
+                            config_manager.set_room_setting(room_id, "restart_on_resolution_change", True)
                     else:
                         logger.warning(f"Cannot set {setting_type} setting without providing {setting_type} identifier.")
                 
@@ -59,10 +67,18 @@ def main():
                     if setting_type not in ['user', 'room']:
                         raise ArgsParseError("Invalid value for -disable-resolution-restart. Use 'user' or 'room'.")
                     
+                    # Handle single stream mode
                     if setting_type == 'user' and args.user:
                         config_manager.set_user_setting(args.user, "restart_on_resolution_change", False)
                     elif setting_type == 'room' and args.room_id:
                         config_manager.set_room_setting(args.room_id, "restart_on_resolution_change", False)
+                    # Handle multi-stream mode
+                    elif setting_type == 'user' and args.users:
+                        for user in args.users:
+                            config_manager.set_user_setting(user, "restart_on_resolution_change", False)
+                    elif setting_type == 'room' and args.room_ids:
+                        for room_id in args.room_ids:
+                            config_manager.set_room_setting(room_id, "restart_on_resolution_change", False)
                     else:
                         logger.warning(f"Cannot set {setting_type} setting without providing {setting_type} identifier.")
                 
@@ -76,6 +92,13 @@ def main():
                         config_manager.set_user_setting(args.user, "resolution_check_interval", args.resolution_check_interval)
                     elif args.room_id:
                         config_manager.set_room_setting(args.room_id, "resolution_check_interval", args.resolution_check_interval)
+                    # Handle multi-stream mode
+                    elif args.users:
+                        for user in args.users:
+                            config_manager.set_user_setting(user, "resolution_check_interval", args.resolution_check_interval)
+                    elif args.room_ids:
+                        for room_id in args.room_ids:
+                            config_manager.set_room_setting(room_id, "resolution_check_interval", args.resolution_check_interval)
                     else:
                         # Set as default if no specific user/room provided
                         config_manager.config["default"]["resolution_check_interval"] = args.resolution_check_interval
