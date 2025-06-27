@@ -9,7 +9,7 @@
 
 The TikTok Live Recorder is a tool designed to easily capture and save live streaming sessions from TikTok. It records both audio and video, allowing users to revisit and preserve engaging live content for later enjoyment and analysis. It's a valuable resource for creators, researchers, and anyone who wants to capture memorable moments from TikTok live streams.
 
-<img src="https://i.ibb.co/YTHp5DT/image.png" alt="image" border="0">
+<img src="https://i.ibb.co/N2TCwVhx/pic.png" alt="image" border="0">
 
 </div>
 
