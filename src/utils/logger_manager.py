@@ -1,4 +1,5 @@
 import logging
+from utils.colors import Colors, VisualUtils
 
 class MaxLevelFilter(logging.Filter):
     """
@@ -62,6 +63,75 @@ class LoggerManager:
         Log an ERROR-level message.
         """
         self.logger.error(message)
+
+    def info_red(self, message):
+        """
+        Log an INFO-level message in red color.
+        """
+        colored_message = Colors.red(message)
+        self.logger.info(colored_message)
+
+    def info_green(self, message):
+        """
+        Log an INFO-level message in green color.
+        """
+        colored_message = Colors.green(message)
+        self.logger.info(colored_message)
+    
+    def success(self, message):
+        """
+        Log a success message with enhanced styling.
+        """
+        colored_message = Colors.success(f"✓ {message}")
+        self.logger.info(colored_message)
+    
+    def warning(self, message):
+        """
+        Log a warning message with enhanced styling.
+        """
+        colored_message = Colors.warning(f"⚠ {message}")
+        self.logger.info(colored_message)
+    
+    def info_enhanced(self, message):
+        """
+        Log an info message with enhanced styling.
+        """
+        colored_message = Colors.info(f"ℹ {message}")
+        self.logger.info(colored_message)
+    
+    def highlight(self, message):
+        """
+        Log a highlighted message.
+        """
+        colored_message = Colors.highlight(f"★ {message}")
+        self.logger.info(colored_message)
+    
+    def tiktok_style(self, message, use_pink=True):
+        """
+        Log a message with TikTok brand styling.
+        """
+        colored_message = Colors.tiktok_theme(message, use_pink)
+        self.logger.info(colored_message)
+    
+    def print_separator(self, char='─', color=None):
+        """
+        Print a separator line.
+        """
+        separator = VisualUtils.create_separator(char, color=color)
+        print(separator)
+    
+    def print_box(self, message, padding=2, border_color=None):
+        """
+        Print a message in a box.
+        """
+        box = VisualUtils.create_box(message, padding, border_color)
+        print(box)
+    
+    def print_status(self, message, status="INFO"):
+        """
+        Print a status message with timestamp and status badge.
+        """
+        VisualUtils.print_status(message, status)
 
 
 logger = LoggerManager().logger

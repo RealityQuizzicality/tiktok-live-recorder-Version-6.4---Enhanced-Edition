@@ -1,7 +1,10 @@
 import os
 import ffmpeg
+import time
+import sys
 
-from utils.logger_manager import logger
+from utils.logger_manager import logger, LoggerManager
+from utils.colors import Colors, VisualUtils
 
 
 class VideoManagement:

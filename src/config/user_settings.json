@@ -1,0 +1,12 @@
+{
+  "default": {
+    "restart_on_resolution_change": true,
+    "resolution_check_interval": 5
+  },
+  "users": {
+    "username": {
+      "restart_on_resolution_change": true
+    }
+  },
+  "rooms": {}
+}

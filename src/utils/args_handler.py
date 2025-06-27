@@ -35,6 +35,31 @@ def parse_args():
         action='store'
     )
 
+    # Multi-stream support
+    parser.add_argument(
+        "-urls",
+        dest="urls",
+        nargs='+',
+        help="Record multiple live sessions from TikTok URLs (space-separated).",
+        action='store'
+    )
+
+    parser.add_argument(
+        "-users",
+        dest="users",
+        nargs='+',
+        help="Record multiple live sessions from TikTok usernames (space-separated).",
+        action='store'
+    )
+
+    parser.add_argument(
+        "-room_ids",
+        dest="room_ids",
+        nargs='+',
+        help="Record multiple live sessions from TikTok room IDs (space-separated).",
+        action='store'
+    )
+
     parser.add_argument(
         "-mode",
         dest="mode",
@@ -103,6 +128,37 @@ def parse_args():
         )
     )
 
+    parser.add_argument(
+        "-enable-resolution-restart",
+        dest="enable_resolution_restart",
+        help=(
+            "Enable automatic restart when resolution changes are detected.\n"
+            "Specify 'user' or 'room' to set per-user or per-room setting.\n"
+            "Example: -enable-resolution-restart user"
+        ),
+        action='store'
+    )
+
+    parser.add_argument(
+        "-disable-resolution-restart",
+        dest="disable_resolution_restart",
+        help=(
+            "Disable automatic restart when resolution changes are detected.\n"
+            "Specify 'user' or 'room' to set per-user or per-room setting.\n"
+            "Example: -disable-resolution-restart user"
+        ),
+        action='store'
+    )
+
+    parser.add_argument(
+        "-resolution-check-interval",
+        dest="resolution_check_interval",
+        help="Set the interval in seconds to check for resolution changes. [Default: 5]",
+        type=int,
+        default=None,
+        action='store'
+    )
+
     args = parser.parse_args()
 
     return args
@@ -111,22 +167,52 @@ def parse_args():
 def validate_and_parse_args():
     args = parse_args()
 
-    if not args.user and not args.room_id and not args.url:
-        raise ArgsParseError("Missing URL, username, or room ID. Please provide one of these parameters.")
-
-    if args.user and args.user.startswith('@'):
-        args.user = args.user[1:]
-
+    # Check if using single stream mode or multi-stream mode
+    single_stream_args = [args.user, args.room_id, args.url]
+    multi_stream_args = [args.users, args.room_ids, args.urls]
+    
+    single_stream_provided = any(single_stream_args)
+    multi_stream_provided = any(multi_stream_args)
+    
+    if not single_stream_provided and not multi_stream_provided:
+        raise ArgsParseError("Missing URL, username, or room ID. Please provide one of these parameters (or use -urls, -users, -room_ids for multiple streams).")
+    
+    if single_stream_provided and multi_stream_provided:
+        raise ArgsParseError("Cannot mix single stream and multi-stream arguments. Use either single stream (-url, -user, -room_id) or multi-stream (-urls, -users, -room_ids) arguments.")
+    
+    # For multi-stream mode, ensure only one type is provided
+    if multi_stream_provided:
+        multi_args_count = sum(1 for arg in multi_stream_args if arg is not None)
+        if multi_args_count > 1:
+            raise ArgsParseError("Please provide only one among -urls, -users, or -room_ids for multi-stream mode.")
+    
+    # Process single stream arguments
+    if single_stream_provided:
+        if args.user and args.user.startswith('@'):
+            args.user = args.user[1:]
+        
+        if (args.user and args.room_id) or (args.user and args.url) or (args.room_id and args.url):
+            raise ArgsParseError("Please provide only one among username, room ID, or URL.")
+        
+        if args.url and not re.match(str(Regex.IS_TIKTOK_LIVE), args.url):
+            raise ArgsParseError("The provided URL does not appear to be a valid TikTok live URL.")
+    
+    # Process multi-stream arguments
+    if multi_stream_provided:
+        if args.users:
+            # Clean up usernames (remove @ prefix if present)
+            args.users = [user[1:] if user.startswith('@') else user for user in args.users]
+        
+        if args.urls:
+            # Validate all URLs
+            for url in args.urls:
+                if not re.match(str(Regex.IS_TIKTOK_LIVE), url):
+                    raise ArgsParseError(f"The provided URL '{url}' does not appear to be a valid TikTok live URL.")
+    
     if not args.mode:
         raise ArgsParseError("Missing mode value. Please specify the mode (manual or automatic).")
     if args.mode not in ["manual", "automatic"]:
         raise ArgsParseError("Incorrect mode value. Choose between 'manual' and 'automatic'.")
-
-    if args.url and not re.match(str(Regex.IS_TIKTOK_LIVE), args.url):
-        raise ArgsParseError("The provided URL does not appear to be a valid TikTok live URL.")
-
-    if (args.user and args.room_id) or (args.user and args.url) or (args.room_id and args.url):
-        raise ArgsParseError("Please provide only one among username, room ID, or URL.")
 
     if (args.automatic_interval < 1):
         raise ArgsParseError("Incorrect automatic_interval value. Must be one minute or more.")
