@@ -6,6 +6,129 @@
   "users": {
     "username": {
       "restart_on_resolution_change": true
+    },
+    "emr.bkup": {
+      "resolution_check_interval": 5
+    },
+    "emrlive2.0": {
+      "resolution_check_interval": 5
+    },
+    "emr.lives": {
+      "resolution_check_interval": 5
+    },
+    "emr.spams": {
+      "resolution_check_interval": 5
+    },
+    "carawatsca": {
+      "resolution_check_interval": 5
+    },
+    "emilylouise620": {
+      "resolution_check_interval": 5
+    },
+    "teepounder01": {
+      "resolution_check_interval": 5
+    },
+    "ameliagilchrist.1": {
+      "resolution_check_interval": 5
+    },
+    "chloe_farquharx": {
+      "resolution_check_interval": 5
+    },
+    "miroslavapetrova26": {
+      "resolution_check_interval": 5
+    },
+    "xmakenzitiahwilliams": {
+      "resolution_check_interval": 5
+    },
+    "lilacoops.x": {
+      "resolution_check_interval": 5
+    },
+    "bel12468": {
+      "resolution_check_interval": 5
+    },
+    "bel365653": {
+      "resolution_check_interval": 5
+    },
+    "enija.28": {
+      "resolution_check_interval": 5
+    },
+    "user097452733": {
+      "resolution_check_interval": 5
+    },
+    "elliesprivatee2": {
+      "resolution_check_interval": 5
+    },
+    "annie.ellis.secret.x": {
+      "resolution_check_interval": 5
+    },
+    "andreeaionita_09": {
+      "resolution_check_interval": 5
+    },
+    "emmabelenantun": {
+      "resolution_check_interval": 5
+    },
+    "eml0ux": {
+      "resolution_check_interval": 5
+    },
+    "chimyinfinland": {
+      "resolution_check_interval": 5
+    },
+    "kakakitwill": {
+      "resolution_check_interval": 5
+    },
+    "pavelelenaandreea": {
+      "resolution_check_interval": 5
+    },
+    "the_viking_of_illusions": {
+      "resolution_check_interval": 5
+    },
+    "kirakira.daily": {
+      "resolution_check_interval": 5
+    },
+    "okisebi": {
+      "resolution_check_interval": 5
+    },
+    "davidcrossland4": {
+      "resolution_check_interval": 5
+    },
+    "_kinnkie": {
+      "resolution_check_interval": 5
+    },
+    "nam_doooo": {
+      "resolution_check_interval": 5
+    },
+    "angelaarletakarwi": {
+      "resolution_check_interval": 5
+    },
+    "sybau2392": {
+      "resolution_check_interval": 5
+    },
+    "myshakhanzadii": {
+      "resolution_check_interval": 5
+    },
+    "D": {
+      "resolution_check_interval": 5
+    },
+    "warripkin": {
+      "resolution_check_interval": 5
+    },
+    "yanzy0": {
+      "resolution_check_interval": 5
+    },
+    "qabshaxsade8": {
+      "resolution_check_interval": 5
+    },
+    "acaaaai_": {
+      "resolution_check_interval": 5
+    },
+    "bagsmart_live.ph": {
+      "resolution_check_interval": 5
+    },
+    "queezyyofficial": {
+      "resolution_check_interval": 5
+    },
+    "thisisrogue": {
+      "resolution_check_interval": 5
     }
   },
   "rooms": {}
