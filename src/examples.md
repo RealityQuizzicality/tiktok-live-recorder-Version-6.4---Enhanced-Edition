@@ -28,6 +28,12 @@ python3 main.py -users user1 user2 user3 -mode manual
 
 # Automatic mode - wait for them to go live and record automatically
 python3 main.py -users user1 user2 user3 -mode automatic -automatic_interval 2
+
+# Import usernames from a text file
+python3 main.py -users-file usernames.txt -mode automatic
+
+# Combine command line users and file import
+python3 main.py -users user1 user2 -users-file usernames.txt -mode automatic
 ```
 
 ### Record multiple URLs simultaneously:

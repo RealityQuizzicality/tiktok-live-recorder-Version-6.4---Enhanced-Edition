@@ -95,6 +95,12 @@ The TikTok Live Recorder now supports recording multiple live streams simultaneo
 # Record multiple users simultaneously
 python main.py -users username1 username2 username3 -mode automatic
 
+# Import usernames from a text file
+python main.py -users-file usernames.txt -mode automatic
+
+# Combine command line users and file import
+python main.py -users user1 user2 -users-file usernames.txt -mode automatic
+
 # Record multiple streams from URLs
 python main.py -urls "https://www.tiktok.com/@user1/live" "https://www.tiktok.com/@user2/live" -mode manual
 

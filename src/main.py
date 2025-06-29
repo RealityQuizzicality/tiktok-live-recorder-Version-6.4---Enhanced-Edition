@@ -27,6 +27,26 @@ def main():
     try:
         args, mode = validate_and_parse_args()
 
+        # Import usernames from text file if provided
+        if args.users_file:
+            try:
+                if not os.path.exists(args.users_file):
+                    raise ArgsParseError(f"Users file not found: {args.users_file}")
+                
+                with open(args.users_file, 'r', encoding='utf-8') as file:
+                    file_users = [line.strip() for line in file if line.strip() and not line.strip().startswith('#')]
+                
+                if not file_users:
+                    raise ArgsParseError(f"No valid usernames found in file: {args.users_file}")
+                
+                # Clean up usernames (remove @ prefix if present)
+                file_users = [user[1:] if user.startswith('@') else user for user in file_users]
+                
+                args.users = file_users if not args.users else args.users + file_users
+                logger.info(f"Imported {len(file_users)} usernames from {args.users_file}")
+                
+            except IOError as e:
+                raise ArgsParseError(f"Error reading users file {args.users_file}: {e}")
 
         # read cookies from file
         cookies = read_cookies()

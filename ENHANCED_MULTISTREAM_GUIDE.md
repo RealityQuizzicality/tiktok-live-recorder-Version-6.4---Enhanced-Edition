@@ -9,6 +9,12 @@ The multi-stream mode now features **dramatically improved visual output** with 
 # Monitor multiple users automatically
 python main.py -users user1 user2 user3 -mode automatic -automatic-interval 5
 
+# Import usernames from a text file
+python main.py -users-file usernames.txt -mode automatic -automatic-interval 5
+
+# Combine command line users and file import
+python main.py -users user1 user2 -users-file usernames.txt -mode automatic -automatic-interval 5
+
 # Monitor multiple room IDs automatically  
 python main.py -room-ids 123456 789012 345678 -mode automatic -automatic-interval 10
 

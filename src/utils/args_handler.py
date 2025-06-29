@@ -53,6 +53,13 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-users-file",
+        dest="users_file",
+        help="Import usernames from a text file (one username per line).",
+        action='store'
+    )
+
+    parser.add_argument(
         "-room_ids",
         dest="room_ids",
         nargs='+',
@@ -169,22 +176,27 @@ def validate_and_parse_args():
 
     # Check if using single stream mode or multi-stream mode
     single_stream_args = [args.user, args.room_id, args.url]
-    multi_stream_args = [args.users, args.room_ids, args.urls]
+    multi_stream_args = [args.users, args.room_ids, args.urls, args.users_file]
     
     single_stream_provided = any(single_stream_args)
     multi_stream_provided = any(multi_stream_args)
     
     if not single_stream_provided and not multi_stream_provided:
-        raise ArgsParseError("Missing URL, username, or room ID. Please provide one of these parameters (or use -urls, -users, -room_ids for multiple streams).")
+        raise ArgsParseError("Missing URL, username, or room ID. Please provide one of these parameters (or use -urls, -users, -room_ids, -users-file for multiple streams).")
     
     if single_stream_provided and multi_stream_provided:
         raise ArgsParseError("Cannot mix single stream and multi-stream arguments. Use either single stream (-url, -user, -room_id) or multi-stream (-urls, -users, -room_ids) arguments.")
     
-    # For multi-stream mode, ensure only one type is provided
+    # For multi-stream mode, ensure only one type is provided (but allow -users and -users-file together)
     if multi_stream_provided:
-        multi_args_count = sum(1 for arg in multi_stream_args if arg is not None)
-        if multi_args_count > 1:
-            raise ArgsParseError("Please provide only one among -urls, -users, or -room_ids for multi-stream mode.")
+        exclusive_args = [args.urls, args.room_ids]
+        user_args = [args.users, args.users_file]
+        
+        exclusive_count = sum(1 for arg in exclusive_args if arg is not None)
+        user_count = sum(1 for arg in user_args if arg is not None)
+        
+        if exclusive_count > 1 or (exclusive_count > 0 and user_count > 0):
+            raise ArgsParseError("Please provide only one type of multi-stream input: either -urls, -room_ids, or user inputs (-users and/or -users-file).")
     
     # Process single stream arguments
     if single_stream_provided:

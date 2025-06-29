@@ -1,0 +1,18 @@
+# TikTok Live Recorder - Example Usernames File
+# 
+# Format: One username per line
+# Lines starting with # are comments and will be ignored
+# Empty lines will be ignored
+# Usernames can include or exclude the @ symbol
+#
+# Examples:
+
+username1
+@username2
+another_user
+content_creator
+@live_streamer
+
+# You can add as many usernames as needed
+# The recorder will monitor all users in this file
+# when used with -users-file parameter
